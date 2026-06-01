@@ -168,4 +168,128 @@ const Login = () => {
           <div className="relative z-10 flex flex-col justify-between p-12 text-white w-full">
             <div>
               <div className="flex items-center gap-2 mb-12">
-           
+                <img src={logo} alt="Dispatch Pharma" className="h-12 w-auto brightness-0 invert" />
+                <span className="font-bold text-2xl">
+                  <span style={{ color: '#ffffff' }}>DISPATCH</span>{' '}
+                  <span style={{ color: '#44ac40' }}>PHARMA</span>
+                </span>
+              </div>
+              
+              <h1 className="text-4xl font-bold mb-4 leading-tight">
+                La plateforme qui révolutionne la distribution médicale
+              </h1>
+              <p className="text-primary-100 text-lg mb-12">
+                Connectez les équipes médicales, centres de santé et livreurs sur une plateforme sécurisée.
+              </p>
+            </div>
+
+            {/* Statistiques */}
+            <div className="grid grid-cols-3 gap-6 mb-12">
+              {stats.map((stat, idx) => (
+                <div key={idx} className="text-center">
+                  <div className="flex justify-center mb-2">{stat.icon}</div>
+                  <p className="text-3xl font-bold text-white">{stat.value}</p>
+                  <p className="text-primary-100 text-sm">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Badge certification */}
+            <div className="flex items-center gap-2 text-primary-100">
+              <ShieldCheckIcon className="h-5 w-5" />
+              <span className="text-sm">Plateforme certifiée & sécurisée</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Colonne de droite - Formulaire de connexion */}
+        <div className="flex-1 flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-gray-50">
+          <div className="max-w-md w-full space-y-8">
+            {/* Logo visible sur mobile */}
+            <div className="text-center lg:hidden">
+              <img src={logo} alt="Dispatch Pharma" className="mx-auto h-12 w-auto" />
+              <h2 className="mt-6 text-3xl font-bold text-gray-900">DISPATCH PHARMA</h2>
+            </div>
+
+            {/* Titre caché sur desktop car déjà dans colonne gauche */}
+            <div className="hidden lg:block">
+              <h2 className="text-2xl font-bold text-gray-900">Connexion</h2>
+              <p className="text-gray-600 mt-1">Accédez à votre espace sécurisé</p>
+            </div>
+
+            <div className="lg:hidden text-center mb-8">
+              <p className="text-gray-600">Accédez à votre espace sécurisé</p>
+            </div>
+
+            <form className="space-y-6" onSubmit={handleLogin} autoComplete="off">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Adresse email *
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <EnvelopeIcon className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="input pl-10"
+                    placeholder="abcde@wxyz.com"
+                    autoComplete="off"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Mot de passe *
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <LockClosedIcon className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="input pl-10 pr-10"
+                    placeholder="••••••••"
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    {showPassword ? (
+                      <EyeSlashIcon className="h-5 w-5" />
+                    ) : (
+                      <EyeIcon className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary w-full py-3 text-lg flex items-center justify-center gap-2"
+              >
+                {loading ? 'Connexion en cours...' : 'Se connecter'}
+              </button>
+            </form>
+
+            <div className="text-center text-xs text-gray-400 mt-8">
+              <p>Accès réservé aux membres autorisés de DISPATCH PHARMA</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
