@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+@layer base {
+  body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f9fafb;
+    color: #111827;
+  }
+}
+
+
+
+@layer components {
+  .btn-primary {
+    background-color: #0157bd;
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+  .btn-primary:hover {
+    background-color: #01469a;
+  }
+  
+  .btn-secondary {
+    background-color: #44ac40;
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover {
+    background-color: #3a9a36;
+  }
+  
+  .btn-outline {
+    border: 2px solid #0157bd;
+    color: #0157bd;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+  }
+  .btn-outline:hover {
+    background-color: #0157bd;
+    color: white;
+  }
+  
+  .card {
+    background-color: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    padding: 1.25rem;
+  }
+  .card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .input {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+  }
+  .input:focus {
+    outline: none;
+    ring: 2px solid #0157bd;
+    border-color: transparent;
+  }
+}
+
+/* ==================== CARROUSEL INFINI ==================== */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.carousel-track {
+  display: flex;
+  width: fit-content;
+  animation: scroll 30s linear infinite;
+}
+
+.carousel-track:hover {
+  animation-play-state: paused;
+}
+
+.carousel-card {
+  transition: all 0.3s ease;
+}
+
+.carousel-card:hover {
+  transform: translateY(-5px);
+}
+
+@media (max-width: 768px) {
+  .carousel-card {
+    width: 280px;
+  }
+  .carousel-card .w-40 {
+    width: 120px;
+    height: 120px;
+  }
+}
