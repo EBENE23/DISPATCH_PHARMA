@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
       setUser(response.data.user);
       setTempToken(null);
       toast.success('Connexion réussie !');
-      return true;
+      return response.data.user;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Code invalide');
       return false;

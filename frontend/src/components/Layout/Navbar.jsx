@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
+import dispatchLogo from '../../assets/images/logos/dispatch-logo.png';
+import defaultAvatar from '../../assets/images/avatars/avatar-admin.png';
 import { 
   HomeIcon, 
   ShoppingBagIcon, 
@@ -17,7 +19,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 const Navbar = () => {
-  const { user, logout, isAdmin, isDelegate } = useAuth();
+  const { user, logout } = useAuth();
   const { summary } = useCart();
   const location = useLocation();
   const navigate = useNavigate();
@@ -50,10 +52,10 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <img 
-              src="/images/logos/dispatch-logo.png" 
+              src={dispatchLogo} 
               alt="Dispatch Pharma" 
               className="h-10 w-auto"
-              onError={(e) => e.target.src = 'https://via.placeholder.com/40x40?text=DP'}
+              onError={(e) => { e.target.src = dispatchLogo; }}
             />
             <span className="font-bold text-xl text-primary-500">DISPATCH PHARMA</span>
           </Link>
@@ -94,10 +96,10 @@ const Navbar = () => {
             <div className="relative">
               <button className="flex items-center space-x-2">
                 <img
-                  src={user?.avatar || '/images/avatars/default-avatar.png'}
+                  src={user?.avatar || defaultAvatar}
                   alt={user?.fullName}
                   className="h-8 w-8 rounded-full object-cover"
-                  onError={(e) => e.target.src = 'https://via.placeholder.com/32x32?text=U'}
+                  onError={(e) => { e.target.src = defaultAvatar; }}
                 />
                 <span className="hidden md:inline text-sm font-medium text-gray-700">
                   {user?.fullName?.split(' ')[0]}

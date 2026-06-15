@@ -1,114 +1,92 @@
 import React, { useState } from 'react';
-import { MagnifyingGlassIcon, PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, EllipsisHorizontalIcon, EnvelopeIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const AdminDelegates = () => {
   const [delegates, setDelegates] = useState([
-    { id: 1, name: 'Jean Kamga', email: 'jean.kamga@dispatch.com', sector: 'Yaoundé Centre', status: 'Actif', orders: 45, revenue: 1250000 },
-    { id: 2, name: 'Marie Ngo', email: 'marie.ngo@dispatch.com', sector: 'Douala', status: 'Actif', orders: 38, revenue: 980000 },
-    { id: 3, name: 'Paul Atangana', email: 'paul.atangana@dispatch.com', sector: 'Littoral', status: 'Inactif', orders: 12, revenue: 320000 },
-    { id: 4, name: 'Claire Mbarga', email: 'claire.mbarga@dispatch.com', sector: 'Yaoundé Nord', status: 'Actif', orders: 52, revenue: 1560000 },
+    { id: 1, name: 'Jean Kamga', email: 'jean.kamga@bio-pharma.cm', phone: '691234567', city: 'Yaoundé', district: 'Bastos', joinDate: '2025-01-10', status: 'active', totalOrders: 45, sector: 'Centre' },
+    { id: 2, name: 'Marie Ngo', email: 'marie.ngo@bio-pharma.cm', phone: '698765432', city: 'Douala', district: 'Akwa', joinDate: '2025-02-15', status: 'active', totalOrders: 38, sector: 'Littoral' },
+    { id: 3, name: 'Paul Atangana', email: 'paul.atangana@bio-pharma.cm', phone: '677889900', city: 'Yaoundé', district: 'Mvog-Mbi', joinDate: '2025-03-20', status: 'suspended', totalOrders: 12, sector: 'Centre' },
+    { id: 4, name: 'Claire Mbarga', email: 'claire.mbarga@bio-pharma.cm', phone: '690001122', city: 'Douala', district: 'Bonamoussadi', joinDate: '2025-04-25', status: 'active', totalOrders: 52, sector: 'Littoral' },
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState('all');
+  const [selectedDelegate, setSelectedDelegate] = useState(null);
+  const [showActionsMenu, setShowActionsMenu] = useState(null);
 
-  const filteredDelegates = delegates.filter(d => 
-    d.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    d.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    d.sector.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const getFilteredDelegates = () => {
+    let filtered = delegates.filter(d => 
+      d.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      d.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      d.city.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    if (filterType === 'new') {
+      filtered = filtered.filter(d => new Date(d.joinDate) > new Date('2025-03-01'));
+    } else if (filterType === 'suspended') {
+      filtered = filtered.filter(d => d.status === 'suspended');
+    }
+    return filtered;
+  };
 
-  const getStatusBadge = (status) => {
-    return status === 'Actif' 
-      ? 'bg-green-100 text-green-800' 
-      : 'bg-red-100 text-red-800';
+  const stats = {
+    total: delegates.length,
+    new: delegates.filter(d => new Date(d.joinDate) > new Date('2025-03-01')).length,
+    suspended: delegates.filter(d => d.status === 'suspended').length
   };
 
   return (
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Délégués médicaux</h1>
-        <p className="text-gray-500">Gérez l'ensemble des délégués médicaux de la plateforme</p>
+        <p className="text-gray-500">Gérez les délégués médicaux</p>
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
-        <div className="relative flex-1">
-          <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Rechercher un délégué..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="input pl-10"
-          />
+      <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
+        <div className="grid grid-cols-3 gap-4 mb-4 pb-4 border-b">
+          <button onClick={() => setFilterType('all')} className={`text-center p-3 rounded-lg ${filterType === 'all' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'}`}>
+            <p className="text-2xl font-bold">{stats.total}</p><p className="text-sm">Tous</p>
+          </button>
+          <button onClick={() => setFilterType('new')} className={`text-center p-3 rounded-lg ${filterType === 'new' ? 'bg-green-50 text-green-600' : 'hover:bg-gray-50'}`}>
+            <p className="text-2xl font-bold">{stats.new}</p><p className="text-sm">Nouveaux</p>
+          </button>
+          <button onClick={() => setFilterType('suspended')} className={`text-center p-3 rounded-lg ${filterType === 'suspended' ? 'bg-red-50 text-red-600' : 'hover:bg-gray-50'}`}>
+            <p className="text-2xl font-bold">{stats.suspended}</p><p className="text-sm">Suspendus</p>
+          </button>
         </div>
-        <button className="btn-primary flex items-center gap-2">
-          <PlusIcon className="h-5 w-5" />
-          Nouveau délégué
-        </button>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-blue-600">{delegates.length}</p>
-          <p className="text-sm text-gray-500">Total délégués</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-green-600">{delegates.filter(d => d.status === 'Actif').length}</p>
-          <p className="text-sm text-gray-500">Actifs</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-purple-600">{delegates.reduce((sum, d) => sum + d.orders, 0)}</p>
-          <p className="text-sm text-gray-500">Commandes totales</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-emerald-600">{(delegates.reduce((sum, d) => sum + d.revenue, 0) / 1000000).toFixed(1)}M FCFA</p>
-          <p className="text-sm text-gray-500">CA généré</p>
-        </div>
+        <div className="relative"><MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" /><input type="text" placeholder="Rechercher un délégué..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="input pl-10" /></div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Secteur</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Commandes</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">CA</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+        <table className="w-full">
+          <thead className="bg-gray-50">
+            <tr><th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom complet</th><th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date d'adhésion</th><th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User ID</th><th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Localisation</th><th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th></tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {getFilteredDelegates().map((delegate) => (
+              <tr key={delegate.id} className="hover:bg-gray-50 cursor-pointer" onClick={() => setSelectedDelegate(delegate)}>
+                <td className="px-6 py-4"><div className="flex items-center gap-3"><div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">{delegate.name.charAt(0)}</div><div><p className="font-medium">{delegate.name}</p><p className="text-xs text-gray-500">{delegate.email}</p></div></div></td>
+                <td className="px-6 py-4">{new Date(delegate.joinDate).toLocaleDateString('fr-FR')}</td>
+                <td className="px-6 py-4 font-mono text-sm">#{delegate.id.toString().padStart(6, '0')}</td>
+                <td className="px-6 py-4">{delegate.city} - {delegate.district}</td>
+                <td className="px-6 py-4 relative" onClick={(e) => e.stopPropagation()}>
+                  <button onClick={() => setShowActionsMenu(showActionsMenu === delegate.id ? null : delegate.id)} className="p-2 hover:bg-gray-100 rounded-lg"><EllipsisHorizontalIcon className="h-5 w-5 text-gray-500" /></button>
+                  {showActionsMenu === delegate.id && (<div className="absolute right-6 top-12 bg-white rounded-lg shadow-lg border w-40 z-10"><button className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><EnvelopeIcon className="h-4 w-4" />Message</button><button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"><TrashIcon className="h-4 w-4" />Supprimer</button></div>)}
+                </td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredDelegates.map((delegate) => (
-                <tr key={delegate.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{delegate.name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{delegate.email}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{delegate.sector}</td>
-                  <td className="px-6 py-4 text-sm text-gray-600">{delegate.orders}</td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">{delegate.revenue.toLocaleString()} FCFA</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs rounded-full ${getStatusBadge(delegate.status)}`}>
-                      {delegate.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <button className="p-1 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                        <PencilIcon className="h-4 w-4" />
-                      </button>
-                      <button className="p-1 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                        <TrashIcon className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
+
+      {selectedDelegate && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setSelectedDelegate(null)}>
+          <div className="bg-white rounded-xl max-w-2xl w-full p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center mb-4"><h3 className="text-xl font-bold">Détails du délégué</h3><button onClick={() => setSelectedDelegate(null)}><XMarkIcon className="h-6 w-6" /></button></div>
+            <div className="flex items-center gap-4 mb-6"><div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-3xl font-bold">{selectedDelegate.name.charAt(0)}</div><div><h2 className="text-2xl font-bold">{selectedDelegate.name}</h2><p className="text-gray-500">{selectedDelegate.email}</p></div></div>
+            <div className="grid grid-cols-2 gap-4"><div className="bg-gray-50 p-4 rounded-lg"><p className="text-sm text-gray-500">Commandes traitées</p><p className="text-xl font-bold">{selectedDelegate.totalOrders}</p></div><div className="bg-gray-50 p-4 rounded-lg"><p className="text-sm text-gray-500">Date d'adhésion</p><p className="text-xl font-bold">{new Date(selectedDelegate.joinDate).toLocaleDateString('fr-FR')}</p></div><div className="bg-gray-50 p-4 rounded-lg"><p className="text-sm text-gray-500">Secteur</p><p className="text-xl font-bold">{selectedDelegate.sector}</p></div><div className="bg-gray-50 p-4 rounded-lg"><p className="text-sm text-gray-500">Localisation</p><p className="text-xl font-bold">{selectedDelegate.city} - {selectedDelegate.district}</p></div></div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

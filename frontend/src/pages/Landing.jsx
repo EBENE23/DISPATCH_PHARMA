@@ -109,7 +109,7 @@ const Landing = () => {
             {/* Logo */}
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollToSection('hero')}>
               <img src={logo} alt="Dispatch Pharma" className="h-12 w-auto" />
-              <span className="font-bold text-2xl hidden md:inline">
+              <span className="font-bold text-2xl  md:inline">
                 <span style={{ color: '#0157bd' }}>DISPATCH</span>{' '}
                 <span style={{ color: '#44ac40' }}>PHARMA</span>
               </span>
@@ -230,7 +230,7 @@ const Landing = () => {
             <span className="text-secondary-500">délégués médicaux</span>
           </h1>
           <p className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto mb-10" data-aos="fade-up" data-aos-delay="200">
-            Gérez vos commandes, communiquez avec vos médecins et optimisez vos tournées
+            Gérez vos commandes, communiquez avec vos professionnels de santé et optimisez vos tournées
             grâce à notre plateforme intelligente.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center" data-aos="fade-up" data-aos-delay="400">
@@ -451,7 +451,11 @@ const Landing = () => {
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div>
-              <div className="flex items-center gap-2 mb-4"><img src={logo} alt="Dispatch Pharma" className="h-10 w-auto" /><span className="font-bold text-xl text-white">DISPATCH PHARMA</span></div>
+              <div className="flex items-center gap-2 mb-4"><img src={logo} alt="Dispatch Pharma" className="h-10 w-auto" />
+                <span className="font-bold text-xl text-white">
+                    <span style={{ color: '#0157bd' }}>DISPATCH</span>{' '}
+                    <span style={{ color: '#44ac40' }}>PHARMA</span>
+                </span></div>
               <p className="text-sm mb-4">L'innovation au service des délégués médicaux. Une plateforme moderne et sécurisée pour la gestion des commandes biopharmaceutiques.</p>
               <div className="flex gap-3">
                 <a href="#" className="text-gray-400 hover:text-primary-500 transition-colors"><svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg></a>

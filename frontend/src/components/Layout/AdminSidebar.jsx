@@ -4,33 +4,35 @@ import { useAuth } from '../../context/AuthContext';
 import { 
   HomeIcon, 
   UsersIcon, 
-  TruckIcon, 
-  BuildingOfficeIcon, 
+  ShoppingBagIcon, 
+  ClipboardDocumentListIcon, 
+  TruckIcon,
   CurrencyDollarIcon,
-  ShoppingBagIcon,
-  ClipboardDocumentListIcon,
+  MegaphoneIcon,
   Cog6ToothIcon,
   ArrowRightOnRectangleIcon,
-  XMarkIcon,
   ChartBarIcon,
-  UserGroupIcon
+  BuildingOfficeIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon
 } from '@heroicons/react/24/outline';
 import logo from '../../assets/images/logos/dispatch-logo.png';
 
-const AdminSidebar = ({ isMobile, onClose }) => {
+const AdminSidebar = ({ collapsed, onToggleCollapse }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
   const menuItems = [
-    { path: '/admin', label: 'Tableau de bord', icon: <HomeIcon className="h-5 w-5" />, color: 'bg-blue-500' },
-    { path: '/admin/delegates', label: 'Délégués médicaux', icon: <UserGroupIcon className="h-5 w-5" />, color: 'bg-green-500' },
-    { path: '/admin/delivery', label: 'Livreurs', icon: <TruckIcon className="h-5 w-5" />, color: 'bg-orange-500' },
-    { path: '/admin/hospitals', label: 'Hôpitaux', icon: <BuildingOfficeIcon className="h-5 w-5" />, color: 'bg-purple-500' },
-    { path: '/admin/revenue', label: 'Chiffre d\'affaires', icon: <CurrencyDollarIcon className="h-5 w-5" />, color: 'bg-emerald-500' },
-    { path: '/admin/orders', label: 'Commandes', icon: <ClipboardDocumentListIcon className="h-5 w-5" />, color: 'bg-indigo-500' },
-    { path: '/admin/products', label: 'Produits', icon: <ShoppingBagIcon className="h-5 w-5" />, color: 'bg-pink-500' },
-    { path: '/admin/statistics', label: 'Statistiques', icon: <ChartBarIcon className="h-5 w-5" />, color: 'bg-cyan-500' },
-    { path: '/admin/settings', label: 'Paramètres', icon: <Cog6ToothIcon className="h-5 w-5" />, color: 'bg-gray-500' },
+    { path: '/admin', label: 'Tableau de bord', icon: <HomeIcon className="h-5 w-5" />, end: true },
+    { path: '/admin/catalog', label: 'Catalogue', icon: <ShoppingBagIcon className="h-5 w-5" /> },
+    { path: '/admin/pharmacists', label: 'Pharmaciens', icon: <BuildingOfficeIcon className="h-5 w-5" /> },
+    { path: '/admin/delegates', label: 'Délégués', icon: <UsersIcon className="h-5 w-5" /> },
+    { path: '/admin/delivery', label: 'Livreurs', icon: <TruckIcon className="h-5 w-5" /> },
+    { path: '/admin/orders', label: 'Commandes', icon: <ClipboardDocumentListIcon className="h-5 w-5" /> },
+    { path: '/admin/payments', label: 'Paiements', icon: <CurrencyDollarIcon className="h-5 w-5" /> },
+    { path: '/admin/announcements', label: 'Annonces', icon: <MegaphoneIcon className="h-5 w-5" /> },
+    { path: '/admin/statistics', label: 'Statistiques', icon: <ChartBarIcon className="h-5 w-5" /> },
+    { path: '/admin/settings', label: 'Paramètres', icon: <Cog6ToothIcon className="h-5 w-5" /> },
   ];
 
   const handleLogout = () => {
@@ -38,95 +40,81 @@ const AdminSidebar = ({ isMobile, onClose }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     navigate('/login');
-    if (onClose) onClose();
   };
 
   return (
-    <div className="h-full w-full bg-gradient-to-b from-gray-900 to-gray-800 text-white flex flex-col shadow-xl">
+    <div className={`h-full bg-gray-900 text-white flex flex-col transition-all duration-300 ${
+      collapsed ? 'w-20' : 'w-64'
+    }`}>
       {/* Logo */}
-      <div className="p-6 border-b border-gray-700">
+      <div className={`p-5 border-b border-gray-700 ${collapsed ? 'px-3' : ''}`}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-white/10 p-2 rounded-xl">
-              <img src={logo} alt="Dispatch Pharma" className="h-8 w-auto brightness-0 invert" />
-            </div>
-            <div>
-              <span className="font-bold text-lg block">
-                <span style={{ color: '#ffffff' }}>DISPATCH</span>
-                <span style={{ color: '#44ac40' }}>PHARMA</span>
-              </span>
-              <span className="text-xs text-gray-400">Espace Administrateur</span>
-            </div>
+          <div className={`flex items-center gap-3 ${collapsed ? 'justify-center w-full' : ''}`}>
+            <img src={logo} alt="Logo" className="h-8 w-8 brightness-0 invert" />
+            {!collapsed && (
+              <div>
+                <div className="font-bold text-white">DISPATCH PHARMA</div>
+                <div className="text-xs text-gray-400">Administrateur</div>
+              </div>
+            )}
           </div>
-          {isMobile && (
-            <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-700 transition-colors">
-              <XMarkIcon className="h-5 w-5" />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Profil administrateur */}
-      <div className="p-4 m-3 bg-gray-700/50 rounded-xl">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
-            <span className="text-white font-bold text-lg">A</span>
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-white">Administrateur</p>
-            <p className="text-xs text-gray-400">Super Admin</p>
-          </div>
-          <div className="w-2 h-2 bg-green-400 rounded-full"></div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-6 px-4 overflow-y-auto">
-        <div className="mb-6">
-          <p className="text-xs text-gray-400 uppercase tracking-wider mb-3 px-4">Navigation principale</p>
-          <ul className="space-y-1">
-            {menuItems.map((item) => (
-              <li key={item.path}>
-                <NavLink
-                  to={item.path}
-                  onClick={() => isMobile && onClose?.()}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
-                      isActive
-                        ? 'bg-gray-700 text-white shadow-lg'
-                        : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                    }`
-                  }
-                >
-                  <div className={`p-1 rounded-lg ${item.color} bg-opacity-20 group-hover:bg-opacity-30 transition-all`}>
-                    {item.icon}
-                  </div>
-                  <span className="text-sm font-medium">{item.label}</span>
-                  {item.badge && (
-                    <span className="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
-                      {item.badge}
-                    </span>
-                  )}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <nav className="flex-1 py-4">
+        {menuItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            end={item.end || false}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-5 py-3 text-sm transition-colors ${
+                isActive ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+              } ${collapsed ? 'justify-center px-2' : ''}`
+            }
+            title={collapsed ? item.label : ''}
+          >
+            {item.icon}
+            {!collapsed && <span>{item.label}</span>}
+          </NavLink>
+        ))}
       </nav>
 
-      {/* Footer */}
+      {/* Footer avec bouton de collapse - FLÈCHE BIEN VISIBLE */}
       <div className="p-4 border-t border-gray-700">
+        {/* Bouton de collapse/expand - Placé en premier pour être visible */}
+        <button
+          onClick={onToggleCollapse}
+          className={`flex items-center justify-center mb-4 p-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors w-full ${
+            collapsed ? 'flex-col' : ''
+          }`}
+          title={collapsed ? 'Agrandir' : 'Réduire'}
+        >
+          {collapsed ? (
+            <>
+              <ChevronRightIcon className="h-5 w-5" />
+              <span className="text-xs mt-1">Agrandir</span>
+            </>
+          ) : (
+            <>
+              <ChevronLeftIcon className="h-5 w-5" />
+              <span className="ml-2 text-sm">Réduire le menu</span>
+            </>
+          )}
+        </button>
+
+        {/* Bouton déconnexion */}
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-red-600 hover:text-white transition-all duration-200 w-full group"
+          className={`flex items-center gap-3 px-5 py-3 text-sm text-gray-300 hover:bg-red-600 hover:text-white rounded-lg transition-colors ${
+            collapsed ? 'justify-center px-2' : ''
+          } w-full`}
+          title={collapsed ? 'Déconnexion' : ''}
         >
-          <ArrowRightOnRectangleIcon className="h-5 w-5 group-hover:rotate-180 transition-transform duration-300" />
-          <span className="text-sm font-medium">Déconnexion</span>
+          <ArrowRightOnRectangleIcon className="h-5 w-5" />
+          {!collapsed && <span>Déconnexion</span>}
         </button>
-        <p className="text-gray-500 text-xs text-center mt-4">
-          © 2025 DISPATCH PHARMA<br />
-          Version 1.0.0
-        </p>
       </div>
     </div>
   );

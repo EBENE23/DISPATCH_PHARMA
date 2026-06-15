@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { toast } from 'react-toastify';
 import { EnvelopeIcon, LockClosedIcon, ShieldCheckIcon, TruckIcon, UserGroupIcon, BuildingOfficeIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import logo from '../assets/images/logos/dispatch-logo.png';
 import doctorBackground from '../assets/images/avatars/avatar-doctor.jpg';
@@ -52,9 +51,9 @@ const Login = () => {
   const handleVerifyCode = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const success = await verifyCode(code);
-    if (success) {
-      navigate('/dashboard');
+    const user = await verifyCode(code);
+    if (user) {
+      navigate(user.role === 'admin' ? '/admin' : '/dashboard');
     }
     setLoading(false);
   };
