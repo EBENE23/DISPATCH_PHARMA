@@ -33,8 +33,7 @@ const AdminDeliveryPersons = () => {
 
   return (
     <div>
-      <div className="mb-6"><h1 className="text-2xl font-bold text-gray-800">Livreurs</h1><p className="text-gray-500">Gérez les livreurs</p></div>
-      <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
+        <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
         <div className="grid grid-cols-3 gap-4 mb-4 pb-4 border-b">
           <button onClick={() => setFilterType('all')} className={`text-center p-3 rounded-lg ${filterType === 'all' ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'}`}><p className="text-2xl font-bold">{stats.total}</p><p className="text-sm">Tous</p></button>
           <button onClick={() => setFilterType('new')} className={`text-center p-3 rounded-lg ${filterType === 'new' ? 'bg-green-50 text-green-600' : 'hover:bg-gray-50'}`}><p className="text-2xl font-bold">{stats.new}</p><p className="text-sm">Nouveaux</p></button>

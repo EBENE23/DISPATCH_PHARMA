@@ -81,11 +81,6 @@ const AdminStatistics = () => {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Statistiques avancées</h1>
-        <p className="text-gray-500">Analyse détaillée des performances</p>
-      </div>
-
       {/* Cartes statistiques */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {statsCards.map((stat, idx) => (

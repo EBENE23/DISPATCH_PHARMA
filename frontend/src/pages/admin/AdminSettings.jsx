@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Cog6ToothIcon, 
   ShieldCheckIcon, 
@@ -6,20 +6,41 @@ import {
   PaintBrushIcon, 
   EnvelopeIcon, 
   KeyIcon,
-  GlobeAltIcon,
-  LanguageIcon,
   DocumentArrowDownIcon,
   TrashIcon,
   ArrowPathIcon,
-  CheckCircleIcon
+  UserCircleIcon,
+  PencilIcon,
+  XMarkIcon,
+  CameraIcon,
+  PhotoIcon
 } from '@heroicons/react/24/outline';
 import { toast } from 'react-toastify';
+import { useAuth } from '../../context/AuthContext';
 
 const AdminSettings = () => {
+  const { user, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState('general');
   const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
 
-  // ==================== ÉTATS DES PARAMÈTRES ====================
+  // ==================== PROFIL UTILISATEUR ====================
+  const [profileData, setProfileData] = useState({
+    fullName: user?.fullName || '',
+    email: user?.email || '',
+    phone: user?.phone || '',
+    role: user?.role || 'admin',
+    avatar: user?.avatar || null
+  });
+
+  const [avatarPreview, setAvatarPreview] = useState(user?.avatar || null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [showAvatarMenu, setShowAvatarMenu] = useState(false);
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
+
+  // ==================== AUTRES PARAMÈTRES ====================
   const [generalSettings, setGeneralSettings] = useState({
     appName: 'DISPATCH PHARMA',
     contactEmail: 'contact@dispatchpharma.com',
@@ -89,6 +110,7 @@ const AdminSettings = () => {
     }
   };
 
+  // ==================== SAUVEGARDE ====================
   const saveSettings = (section, data) => {
     setSaving(true);
     try {
@@ -128,10 +150,74 @@ const AdminSettings = () => {
     document.documentElement.style.setProperty('--color-primary', settings.primaryColor);
   };
 
+  // ==================== GESTION DU PROFIL ====================
+  const handleProfileUpdate = () => {
+    const updatedUser = {
+      ...user,
+      fullName: profileData.fullName,
+      phone: profileData.phone,
+      avatar: avatarPreview
+    };
+    updateUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    toast.success('Profil mis à jour avec succès !');
+    setIsEditingProfile(false);
+  };
+
+  // Gestion de l'avatar avec menu
+  const handleTakePhoto = () => {
+    if (cameraInputRef.current) {
+      cameraInputRef.current.click();
+    }
+    setShowAvatarMenu(false);
+  };
+
+  const handleChoosePhoto = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+    setShowAvatarMenu(false);
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const imageUrl = reader.result;
+        setAvatarPreview(imageUrl);
+        const updatedUser = {
+          ...user,
+          avatar: imageUrl
+        };
+        updateUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        toast.success('Photo de profil mise à jour !');
+      };
+      reader.readAsDataURL(file);
+    }
+    e.target.value = '';
+  };
+
+  const handleAvatarRemove = () => {
+    setAvatarPreview(null);
+    setSelectedFile(null);
+    const updatedUser = {
+      ...user,
+      avatar: null
+    };
+    updateUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    toast.info('Photo de profil supprimée');
+    setShowAvatarMenu(false);
+  };
+
   const handleGeneralSave = () => saveSettings('general', generalSettings);
   const handleSecuritySave = () => saveSettings('security', securitySettings);
   const handleNotificationsSave = () => saveSettings('notifications', notificationSettings);
   const handleAppearanceSave = () => saveSettings('appearance', appearanceSettings);
+  
   const handleEmailSave = () => {
     if (emailSettings.smtpUser && emailSettings.smtpPass) {
       toast.info('Test de connexion SMTP en cours...');
@@ -189,7 +275,7 @@ const AdminSettings = () => {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Paramètres</h1>
-        <p className="text-gray-500">Configurez les paramètres de l'application</p>
+        <p className="text-gray-500">Configurez votre profil et les paramètres de l'application</p>
       </div>
 
       {/* Tabs */}
@@ -210,24 +296,182 @@ const AdminSettings = () => {
         ))}
       </div>
 
-      {/* Contenu Général */}
+      {/* Contenu Général - avec Profil */}
       {activeTab === 'general' && (
-        <div className="bg-white rounded-xl shadow-sm p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-semibold text-gray-800">Informations générales</h3>
-            <button onClick={() => handleResetSettings('general')} className="text-red-600 hover:text-red-700 text-sm flex items-center gap-1">
-              <TrashIcon className="h-4 w-4" /> Réinitialiser
-            </button>
+        <div className="space-y-6">
+          {/* Section Profil */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-semibold text-gray-800">Mon profil</h3>
+              {!isEditingProfile ? (
+                <button 
+                  onClick={() => setIsEditingProfile(true)}
+                  className="text-blue-600 hover:text-blue-700 text-sm flex items-center gap-1"
+                >
+                  <PencilIcon className="h-4 w-4" />
+                  Modifier
+                </button>
+              ) : (
+                <button 
+                  onClick={() => setIsEditingProfile(false)}
+                  className="text-gray-500 hover:text-gray-700 text-sm flex items-center gap-1"
+                >
+                  <XMarkIcon className="h-4 w-4" />
+                  Annuler
+                </button>
+              )}
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-8 items-start">
+              {/* Avatar avec menu et affichage en grand */}
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative">
+                  {/* Cercle de profil cliquable pour agrandir */}
+                  <div 
+                    className="w-32 h-32 rounded-full overflow-hidden bg-gray-200 border-4 border-gray-300 cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => setShowPhotoModal(true)}
+                  >
+                    {avatarPreview ? (
+                      <img src={avatarPreview} alt="Profil" className="w-full h-full object-cover" />
+                    ) : (
+                      <UserCircleIcon className="w-full h-full text-gray-400" />
+                    )}
+                  </div>
+                  
+                  {/* Bouton crayon avec menu */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowAvatarMenu(!showAvatarMenu)}
+                      className="absolute bottom-0 right-0 bg-blue-600 text-white p-2.5 rounded-full hover:bg-blue-700 transition-colors shadow-lg"
+                    >
+                      <PencilIcon className="h-4 w-4" />
+                    </button>
+                    
+                    {/* Menu déroulant */}
+                    {showAvatarMenu && (
+                      <div className="absolute bottom-14 right-0 bg-white rounded-xl shadow-lg border w-48 z-30 overflow-hidden">
+                        <button
+                          onClick={handleTakePhoto}
+                          className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                        >
+                          <CameraIcon className="h-4 w-4 text-gray-500" />
+                          Prendre une photo
+                        </button>
+                        <button
+                          onClick={handleChoosePhoto}
+                          className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                        >
+                          <PhotoIcon className="h-4 w-4 text-gray-500" />
+                          Choisir une photo
+                        </button>
+                        <button
+                          onClick={handleAvatarRemove}
+                          className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-3 transition-colors border-t"
+                        >
+                          <TrashIcon className="h-4 w-4 text-red-500" />
+                          Supprimer la photo
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Inputs cachés */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarChange}
+                />
+                <input
+                  ref={cameraInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="hidden"
+                  onChange={handleAvatarChange}
+                />
+                
+                <p className="text-xs text-gray-400">PNG, JPG jusqu'à 2MB</p>
+                <p className="text-xs text-blue-500 cursor-pointer hover:underline" onClick={() => setShowPhotoModal(true)}>
+                  Agrandir la photo
+                </p>
+              </div>
+
+              {/* Informations */}
+              <div className="flex-1 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Nom complet</label>
+                  <input
+                    type="text"
+                    value={profileData.fullName}
+                    onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })}
+                    disabled={!isEditingProfile}
+                    className={`input ${!isEditingProfile ? 'bg-gray-50' : ''}`}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    type="email"
+                    value={profileData.email}
+                    disabled
+                    className="input bg-gray-50"
+                  />
+                  <p className="text-xs text-gray-400 mt-1">L'email ne peut pas être modifié</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
+                  <input
+                    type="tel"
+                    value={profileData.phone || ''}
+                    onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
+                    disabled={!isEditingProfile}
+                    className={`input ${!isEditingProfile ? 'bg-gray-50' : ''}`}
+                    placeholder="+237 600 000 000"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Rôle</label>
+                  <input
+                    type="text"
+                    value={profileData.role === 'admin' ? 'Administrateur' : profileData.role}
+                    disabled
+                    className="input bg-gray-50"
+                  />
+                </div>
+                {isEditingProfile && (
+                  <button
+                    onClick={handleProfileUpdate}
+                    className="btn-primary flex items-center gap-2"
+                  >
+                    <DocumentArrowDownIcon className="h-4 w-4" />
+                    Enregistrer les modifications
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
-          <div className="space-y-6">
-            <div><label className="block text-sm font-medium text-gray-700 mb-2">Nom de l'application</label><input type="text" value={generalSettings.appName} onChange={(e) => setGeneralSettings({ ...generalSettings, appName: e.target.value })} className="input w-full md:w-96" /></div>
-            <div><label className="block text-sm font-medium text-gray-700 mb-2">Email de contact</label><input type="email" value={generalSettings.contactEmail} onChange={(e) => setGeneralSettings({ ...generalSettings, contactEmail: e.target.value })} className="input w-full md:w-96" /></div>
-            <div><label className="block text-sm font-medium text-gray-700 mb-2">Téléphone</label><input type="tel" value={generalSettings.contactPhone} onChange={(e) => setGeneralSettings({ ...generalSettings, contactPhone: e.target.value })} className="input w-full md:w-96" /></div>
-            <div><label className="block text-sm font-medium text-gray-700 mb-2">Adresse</label><input type="text" value={generalSettings.address} onChange={(e) => setGeneralSettings({ ...generalSettings, address: e.target.value })} className="input w-full md:w-96" /></div>
-            <div><label className="block text-sm font-medium text-gray-700 mb-2">Site web</label><input type="text" value={generalSettings.website} onChange={(e) => setGeneralSettings({ ...generalSettings, website: e.target.value })} className="input w-full md:w-96" /></div>
-            <button onClick={handleGeneralSave} disabled={saving} className="btn-primary flex items-center gap-2">
-              <DocumentArrowDownIcon className="h-4 w-4" /> {saving ? 'Sauvegarde...' : 'Enregistrer'}
-            </button>
+
+          {/* Paramètres généraux */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-semibold text-gray-800">Paramètres généraux</h3>
+              <button onClick={() => handleResetSettings('general')} className="text-red-600 hover:text-red-700 text-sm flex items-center gap-1">
+                <TrashIcon className="h-4 w-4" /> Réinitialiser
+              </button>
+            </div>
+            <div className="space-y-6">
+              <div><label className="block text-sm font-medium text-gray-700 mb-2">Nom de l'application</label><input type="text" value={generalSettings.appName} onChange={(e) => setGeneralSettings({ ...generalSettings, appName: e.target.value })} className="input w-full md:w-96" /></div>
+              <div><label className="block text-sm font-medium text-gray-700 mb-2">Email de contact</label><input type="email" value={generalSettings.contactEmail} onChange={(e) => setGeneralSettings({ ...generalSettings, contactEmail: e.target.value })} className="input w-full md:w-96" /></div>
+              <div><label className="block text-sm font-medium text-gray-700 mb-2">Téléphone</label><input type="tel" value={generalSettings.contactPhone} onChange={(e) => setGeneralSettings({ ...generalSettings, contactPhone: e.target.value })} className="input w-full md:w-96" /></div>
+              <div><label className="block text-sm font-medium text-gray-700 mb-2">Adresse</label><input type="text" value={generalSettings.address} onChange={(e) => setGeneralSettings({ ...generalSettings, address: e.target.value })} className="input w-full md:w-96" /></div>
+              <div><label className="block text-sm font-medium text-gray-700 mb-2">Site web</label><input type="text" value={generalSettings.website} onChange={(e) => setGeneralSettings({ ...generalSettings, website: e.target.value })} className="input w-full md:w-96" /></div>
+              <button onClick={handleGeneralSave} disabled={saving} className="btn-primary flex items-center gap-2">
+                <DocumentArrowDownIcon className="h-4 w-4" /> {saving ? 'Sauvegarde...' : 'Enregistrer'}
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -385,6 +629,41 @@ const AdminSettings = () => {
               <button onClick={handleApiRegenerate} className="btn-primary flex items-center gap-2"><ArrowPathIcon className="h-4 w-4" /> Régénérer les clés</button>
               <button onClick={() => saveSettings('api', apiSettings)} className="btn-outline flex items-center gap-2"><DocumentArrowDownIcon className="h-4 w-4" /> Sauvegarder</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ==================== MODAL PHOTO EN GRAND ==================== */}
+      {showPhotoModal && (
+        <div 
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowPhotoModal(false)}
+        >
+          <div 
+            className="relative max-w-2xl w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setShowPhotoModal(false)}
+              className="absolute -top-12 right-0 text-white hover:text-gray-300 text-3xl transition-colors"
+            >
+              ✕
+            </button>
+            {avatarPreview ? (
+              <img 
+                src={avatarPreview} 
+                alt="Photo de profil" 
+                className="w-full rounded-lg shadow-2xl"
+              />
+            ) : (
+              <div className="bg-gray-800 rounded-lg p-12 text-center">
+                <UserCircleIcon className="w-32 h-32 text-gray-500 mx-auto" />
+                <p className="text-gray-400 mt-4">Aucune photo de profil</p>
+              </div>
+            )}
+            <p className="text-center text-gray-400 text-sm mt-4">
+              Cliquez en dehors de l'image pour fermer
+            </p>
           </div>
         </div>
       )}

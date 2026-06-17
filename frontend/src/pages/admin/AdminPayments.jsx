@@ -165,11 +165,6 @@ const AdminPayments = () => {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Paiements</h1>
-        <p className="text-gray-500">Suivi des transactions</p>
-      </div>
-
       {/* Statistiques */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-white rounded-xl p-4 text-center">

@@ -289,11 +289,6 @@ const AdminCatalog = () => {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Catalogue produits</h1>
-        <p className="text-gray-500">Gérez les produits biopharmaceutiques</p>
-      </div>
-
       {/* Barre de recherche et filtres */}
       <div className="flex flex-col sm:flex-row justify-between gap-4 mb-6">
         <div className="relative flex-1">

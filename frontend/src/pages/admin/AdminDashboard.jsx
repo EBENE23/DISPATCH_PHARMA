@@ -12,7 +12,6 @@ import {
 const AdminDashboard = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('month');
 
-  // Données selon la période
   const activities = {
     week: {
       orders: 45,
@@ -40,11 +39,11 @@ const AdminDashboard = () => {
   const currentData = activities[selectedPeriod];
 
   const aiInsights = [
-    { type: 'positive', message: 'Les commandes ont augmenté de 18% ce mois-ci', action: 'Voir détails', bgColor: 'bg-green-900/30', borderColor: 'border-green-400', textColor: 'text-green-200' },
-    { type: 'warning', message: 'Stock faible pour ImmunoBio (12 unités restantes)', action: 'Réapprovisionner', bgColor: 'bg-orange-900/40', borderColor: 'border-orange-400', textColor: 'text-orange-100' },
-    { type: 'info', message: 'Le Dr. Mbarga n\'a pas commandé depuis 3 semaines', action: 'Contacter', bgColor: 'bg-blue-900/30', borderColor: 'border-blue-400', textColor: 'text-blue-200' },
-    { type: 'positive', message: '5 livraisons en attente dans la zone de Douala', action: 'Voir', bgColor: 'bg-green-900/30', borderColor: 'border-green-400', textColor: 'text-green-200' },
-    { type: 'warning', message: 'Objectif mensuel atteint à 78%', action: 'Détails', bgColor: 'bg-yellow-900/40', borderColor: 'border-yellow-400', textColor: 'text-yellow-100' },
+    { type: 'positive', message: 'Les commandes ont augmenté de 18% ce mois-ci', action: 'Voir détails' },
+    { type: 'warning', message: 'Stock faible pour ImmunoBio (12 unités restantes)', action: 'Réapprovisionner' },
+    { type: 'info', message: 'Le Dr. Mbarga n\'a pas commandé depuis 3 semaines', action: 'Contacter' },
+    { type: 'positive', message: '5 livraisons en attente dans la zone de Douala', action: 'Voir' },
+    { type: 'warning', message: 'Objectif mensuel atteint à 78%', action: 'Détails' },
   ];
 
   const getInsightStyles = (type) => {
@@ -57,11 +56,6 @@ const AdminDashboard = () => {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Tableau de bord</h1>
-        <p className="text-gray-500">Aperçu des activités et statistiques</p>
-      </div>
-
       {/* Période selector */}
       <div className="flex gap-2 mb-6">
         {['week', 'month', 'year'].map((period) => (

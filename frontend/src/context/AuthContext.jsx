@@ -11,25 +11,63 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [tempToken, setTempToken] = useState(null);
 
-  // Charger l'utilisateur au démarrage
+  // ==================== CHARGEMENT DE L'UTILISATEUR ====================
   useEffect(() => {
     const loadUser = async () => {
       const token = localStorage.getItem('token');
+      
+      // Récupérer les données du localStorage d'abord
+      const savedUser = localStorage.getItem('user');
+      let localUser = null;
+      if (savedUser) {
+        try {
+          localUser = JSON.parse(savedUser);
+        } catch (e) {
+          console.error('Erreur parsing user:', e);
+        }
+      }
+      
       if (token) {
         try {
           const response = await authService.getMe();
-          setUser(response.data.user);
+          const backendUser = response.data.user;
+          
+          // Fusionner : garder l'avatar du localStorage s'il existe
+          const mergedUser = {
+            ...backendUser,
+            avatar: localUser?.avatar || backendUser?.avatar || null
+          };
+          
+          setUser(mergedUser);
+          localStorage.setItem('user', JSON.stringify(mergedUser));
         } catch (error) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+          console.error('Erreur chargement utilisateur:', error);
+          // Si erreur, on garde l'utilisateur du localStorage
+          if (localUser) {
+            setUser(localUser);
+          } else {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+          }
         }
+      } else if (localUser) {
+        // Si pas de token mais user dans localStorage (cas rare)
+        setUser(localUser);
       }
       setLoading(false);
     };
     loadUser();
   }, []);
 
-  // Étape 1 : Connexion (email + mot de passe)
+  // ==================== MISE À JOUR DU PROFIL ====================
+  const updateUser = (updatedData) => {
+    const currentUser = user || {};
+    const updatedUser = { ...currentUser, ...updatedData };
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+
+  // ==================== ÉTAPE 1 : CONNEXION ====================
   const login = async (email, password) => {
     try {
       const response = await authService.login(email, password);
@@ -43,7 +81,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Étape 2 : Vérification du code 2FA
+  // ==================== ÉTAPE 2 : VÉRIFICATION DU CODE 2FA ====================
   const verifyCode = async (code) => {
     if (!tempToken) {
       toast.error('Session expirée, veuillez vous reconnecter');
@@ -53,18 +91,28 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await authService.verifyCode(tempToken, code);
       localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-      setUser(response.data.user);
+      
+      // Récupérer l'avatar existant s'il y en a un
+      const savedUser = localStorage.getItem('user');
+      const localUser = savedUser ? JSON.parse(savedUser) : {};
+      
+      const userData = {
+        ...response.data.user,
+        avatar: localUser?.avatar || response.data.user?.avatar || null
+      };
+      
+      localStorage.setItem('user', JSON.stringify(userData));
+      setUser(userData);
       setTempToken(null);
       toast.success('Connexion réussie !');
-      return response.data.user;
+      return true;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Code invalide');
       return false;
     }
   };
 
-  // Renvoyer le code
+  // ==================== RENVOYER LE CODE ====================
   const resendCode = async () => {
     if (!tempToken) {
       toast.error('Session expirée');
@@ -82,7 +130,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Déconnexion
+  // ==================== DÉCONNEXION ====================
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -91,6 +139,7 @@ export const AuthProvider = ({ children }) => {
     toast.info('Déconnecté');
   };
 
+  // ==================== CONTEXTE ====================
   const value = {
     user,
     loading,
@@ -98,6 +147,7 @@ export const AuthProvider = ({ children }) => {
     verifyCode,
     resendCode,
     logout,
+    updateUser,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',
     isDelegate: user?.role === 'delegate',

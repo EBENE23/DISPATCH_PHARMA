@@ -36,11 +36,6 @@ const AdminPharmacists = () => {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Pharmaciens</h1>
-        <p className="text-gray-500">Gérez les pharmaciens hospitaliers</p>
-      </div>
-
       {/* Première ligne : statistiques et recherche */}
       <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
         <div className="grid grid-cols-3 gap-4 mb-4 pb-4 border-b">

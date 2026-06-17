@@ -31,6 +31,7 @@ import AdminPayments from './pages/admin/AdminPayments';
 import AdminAnnouncements from './pages/admin/AdminAnnouncements';
 import AdminStatistics from './pages/admin/AdminStatistics';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminMessages from './pages/admin/AdminMessages';
 
 // Context
 import { AuthProvider } from './context/AuthContext';
@@ -75,6 +76,8 @@ function App() {
             <Route path="announcements" element={<AdminAnnouncements />} />
             <Route path="statistics" element={<AdminStatistics />} />
             <Route path="settings" element={<AdminSettings />} />
+            <Route path="messages" element={<AdminMessages />} />
+            
           </Route>
           
           {/* Routes Délégué */}

@@ -317,10 +317,6 @@ const AdminAnnouncements = () => {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Annonces</h1>
-        <p className="text-gray-500">Gérez les annonces et communications</p>
-      </div>
 
       {/* Statistiques */}
       <div className="grid grid-cols-3 gap-4 mb-6">
